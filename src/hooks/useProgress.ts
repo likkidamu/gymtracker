@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { ProgressEntry, ProgressAIAnalysis, ProgressMeasurements } from '@/types/progress';
 import { progressStorage } from '@/lib/storage';
 import { getTodayISO } from '@/lib/utils/dates';
+import { uploadPhotoWithThumbnail } from '@/lib/supabase/storage';
 
 export function useProgress() {
   const [entries, setEntries] = useState<ProgressEntry[]>([]);
@@ -29,8 +30,15 @@ export function useProgress() {
     aiAnalysis?: ProgressAIAnalysis;
     notes?: string;
   }) => {
+    // Upload photos to Supabase Storage, save URLs in DB
+    const { photoUrl, thumbnailUrl } = await uploadPhotoWithThumbnail(
+      data.photo, data.thumbnail, 'progress'
+    );
+
     const entry = await progressStorage.create({
       ...data,
+      photo: photoUrl,
+      thumbnail: thumbnailUrl,
       date: getTodayISO(),
     });
     setEntries((prev) => [entry, ...prev]);

@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { BottomNav } from "@/components/layout/BottomNav";
+import { AuthNav } from "@/components/layout/AuthNav";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,7 +28,7 @@ export default function RootLayout({
         <main className="max-w-lg mx-auto min-h-screen pb-nav">
           {children}
         </main>
-        <BottomNav />
+        <AuthNav />
       </body>
     </html>
   );

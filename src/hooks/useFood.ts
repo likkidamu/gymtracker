@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { FoodEntry, FoodAIAnalysis, MealType } from '@/types/food';
 import { foodStorage } from '@/lib/storage';
 import { getTodayISO } from '@/lib/utils/dates';
+import { uploadPhotoWithThumbnail } from '@/lib/supabase/storage';
 
 export function useFood() {
   const [entries, setEntries] = useState<FoodEntry[]>([]);
@@ -27,8 +28,15 @@ export function useFood() {
     description?: string;
     aiAnalysis?: FoodAIAnalysis;
   }) => {
+    // Upload photos to Supabase Storage, save URLs in DB
+    const { photoUrl, thumbnailUrl } = await uploadPhotoWithThumbnail(
+      data.photo, data.thumbnail, 'food'
+    );
+
     const entry = await foodStorage.create({
       ...data,
+      photo: photoUrl,
+      thumbnail: thumbnailUrl,
       date: getTodayISO(),
     });
     setEntries((prev) => [entry, ...prev]);

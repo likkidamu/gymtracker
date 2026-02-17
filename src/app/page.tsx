@@ -7,13 +7,23 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { Utensils, TrendingUp, Dumbbell, Plus, Flame, Zap } from 'lucide-react';
+import { Utensils, TrendingUp, Dumbbell, Plus, Flame, Zap, LogOut } from 'lucide-react';
 import Link from 'next/link';
+import { createClient } from '@/lib/supabase/client';
+import { useRouter } from 'next/navigation';
 
 export default function Dashboard() {
   const { loading: foodLoading, getTodayTotals, getTodayEntries } = useFood();
   const { loading: progressLoading, getLatest } = useProgress();
   const { loading: trainingLoading, getActivePlan } = useTraining();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push('/login');
+    router.refresh();
+  };
 
   const loading = foodLoading || progressLoading || trainingLoading;
 
@@ -32,9 +42,14 @@ export default function Dashboard() {
 
   return (
     <div className="px-4 py-6 space-y-4">
-      <div className="mb-2">
-        <h1 className="text-2xl font-bold">GymTracker</h1>
-        <p className="text-sm text-muted">Your AI-powered fitness companion</p>
+      <div className="flex items-center justify-between mb-2">
+        <div>
+          <h1 className="text-2xl font-bold">GymTracker</h1>
+          <p className="text-sm text-muted">Your AI-powered fitness companion</p>
+        </div>
+        <button onClick={handleLogout} className="p-2 text-muted hover:text-foreground rounded-xl hover:bg-zinc-800 cursor-pointer">
+          <LogOut size={20} />
+        </button>
       </div>
 
       {/* Today's Calories */}
