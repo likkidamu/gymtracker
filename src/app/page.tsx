@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { Utensils, TrendingUp, Dumbbell, Plus, Flame, Zap, LogOut } from 'lucide-react';
+import { Utensils, TrendingUp, Dumbbell, Plus, Flame, Zap, LogOut, BarChart3 } from 'lucide-react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
@@ -128,6 +128,17 @@ export default function Dashboard() {
           </Link>
         </Card>
       )}
+
+      {/* View Analytics */}
+      <Link href="/analytics">
+        <Card className="hover:border-zinc-600 transition-colors">
+          <div className="flex items-center gap-2">
+            <BarChart3 size={16} className="text-accent" />
+            <span className="text-sm font-medium">View Analytics</span>
+            <span className="text-xs text-muted ml-auto">Charts & insights →</span>
+          </div>
+        </Card>
+      </Link>
 
       {/* Latest Progress */}
       {latestProgress && (

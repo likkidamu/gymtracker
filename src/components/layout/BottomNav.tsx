@@ -2,13 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, TrendingUp, Utensils, Dumbbell } from 'lucide-react';
+import { LayoutDashboard, TrendingUp, Utensils, Dumbbell, BarChart3 } from 'lucide-react';
 
 const tabs = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/progress', label: 'Progress', icon: TrendingUp },
   { href: '/food', label: 'Food', icon: Utensils },
   { href: '/training', label: 'Training', icon: Dumbbell },
+  { href: '/analytics', label: 'Analytics', icon: BarChart3 },
 ];
 
 export function BottomNav() {
