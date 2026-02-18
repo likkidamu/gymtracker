@@ -63,8 +63,13 @@ export function getTrainingPlanPrompt(
   level: string,
   days: number,
   equipment: string[],
-  notes?: string
+  notes?: string,
+  exerciseNames?: string[]
 ): string {
+  const exerciseList = exerciseNames && exerciseNames.length > 0
+    ? `\n\nAvailable Exercise Database (USE THESE EXACT NAMES):\n${exerciseNames.map((n) => `- ${n}`).join('\n')}`
+    : '';
+
   return `You are an expert personal trainer. Create a workout plan and return ONLY a JSON object (no markdown, no explanation) with this exact structure:
 
 {
@@ -90,6 +95,7 @@ export function getTrainingPlanPrompt(
     }
   ]
 }
+${exerciseList}
 
 Requirements:
 - Goal: ${goal}
@@ -99,6 +105,7 @@ Requirements:
 ${notes ? `- Additional Notes: ${notes}` : ''}
 
 Rules:
+- IMPORTANT: You MUST pick exercise names from the Available Exercise Database above. Use the exact names provided. Do not invent new exercise names.
 - Include ${days} workout days (no rest days in the output unless explicitly needed)
 - Each day should have 5-8 exercises
 - Include proper warm-up exercises

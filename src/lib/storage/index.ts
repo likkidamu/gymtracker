@@ -1,6 +1,7 @@
 import { FoodEntry } from '@/types/food';
 import { ProgressEntry } from '@/types/progress';
 import { TrainingPlan } from '@/types/training';
+import { WorkoutLog } from '@/types/workoutLog';
 import { SupabaseStorageService } from './supabaseService';
 import { IStorageService } from './types';
 
@@ -101,3 +102,40 @@ export const progressStorage: IStorageService<ProgressEntry> =
 
 export const trainingStorage: IStorageService<TrainingPlan> =
   new SupabaseStorageService<TrainingPlan>('training_plans', trainingToDb, trainingFromDb);
+
+// --- Workout log mapping ---
+function workoutLogToDb(data: Partial<WorkoutLog>): Record<string, unknown> {
+  const map: Record<string, unknown> = {};
+  if (data.trainingPlanId !== undefined) map.training_plan_id = data.trainingPlanId;
+  if (data.trainingPlanName !== undefined) map.training_plan_name = data.trainingPlanName;
+  if (data.dayNumber !== undefined) map.day_number = data.dayNumber;
+  if (data.dayName !== undefined) map.day_name = data.dayName;
+  if (data.date !== undefined) map.date = data.date;
+  if (data.bodyWeightKg !== undefined) map.body_weight_kg = data.bodyWeightKg;
+  if (data.exercises !== undefined) map.exercises = data.exercises;
+  if (data.totalCalories !== undefined) map.total_calories = data.totalCalories;
+  if (data.totalVolume !== undefined) map.total_volume = data.totalVolume;
+  if (data.durationMinutes !== undefined) map.duration_minutes = data.durationMinutes;
+  return map;
+}
+
+function workoutLogFromDb(row: Record<string, unknown>): WorkoutLog {
+  return {
+    id: row.id as string,
+    createdAt: row.created_at as string,
+    updatedAt: row.updated_at as string,
+    trainingPlanId: row.training_plan_id as string,
+    trainingPlanName: row.training_plan_name as string,
+    dayNumber: row.day_number as number,
+    dayName: row.day_name as string,
+    date: row.date as string,
+    bodyWeightKg: row.body_weight_kg as number,
+    exercises: row.exercises as WorkoutLog['exercises'],
+    totalCalories: row.total_calories as number,
+    totalVolume: row.total_volume as number,
+    durationMinutes: row.duration_minutes as number,
+  };
+}
+
+export const workoutLogStorage: IStorageService<WorkoutLog> =
+  new SupabaseStorageService<WorkoutLog>('workout_logs', workoutLogToDb, workoutLogFromDb);

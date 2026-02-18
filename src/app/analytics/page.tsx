@@ -1,11 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
+import { Flame, ArrowRight } from 'lucide-react';
 import { useFood } from '@/hooks/useFood';
 import { useProgress } from '@/hooks/useProgress';
 import { useTraining } from '@/hooks/useTraining';
+import { useWorkoutLog } from '@/hooks/useWorkoutLog';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { WeeklyCalorieChart } from '@/components/analytics/WeeklyCalorieChart';
+import { CalorieBalanceChart } from '@/components/analytics/CalorieBalanceChart';
 import { MacroDonutChart } from '@/components/analytics/MacroDonutChart';
 import { MealTypeChart } from '@/components/analytics/MealTypeChart';
 import { MeasurementsRadar } from '@/components/analytics/MeasurementsRadar';
@@ -29,9 +33,15 @@ export default function AnalyticsPage() {
   const { entries: foodEntries, loading: foodLoading, getTodayTotals } = useFood();
   const { entries: progressEntries, loading: progressLoading } = useProgress();
   const { loading: trainingLoading, getActivePlan } = useTraining();
+  const {
+    loading: workoutLogLoading,
+    getTodayCaloriesBurned,
+    getWeeklyWorkoutCount,
+    getDailyCaloriesBurned,
+  } = useWorkoutLog();
   const [period, setPeriod] = useState<Period>('1m');
 
-  const loading = foodLoading || progressLoading || trainingLoading;
+  const loading = foodLoading || progressLoading || trainingLoading || workoutLogLoading;
 
   if (loading) {
     return (
@@ -58,9 +68,16 @@ export default function AnalyticsPage() {
         <p className="text-sm text-muted">Track your fitness journey</p>
       </div>
 
-      <StatsCards foodEntries={foodEntries} activePlan={activePlan} />
+      <StatsCards
+        foodEntries={foodEntries}
+        activePlan={activePlan}
+        weeklyWorkoutCount={getWeeklyWorkoutCount()}
+        todayCaloriesBurned={getTodayCaloriesBurned()}
+      />
 
       <WeeklyCalorieChart entries={foodEntries} />
+
+      <CalorieBalanceChart foodEntries={foodEntries} dailyBurned={getDailyCaloriesBurned(7)} />
 
       <div className="grid grid-cols-2 gap-3">
         <MacroDonutChart
@@ -101,6 +118,22 @@ export default function AnalyticsPage() {
       <MeasurementsRadar entries={progressEntries} />
 
       <MuscleGroupChart plan={activePlan} />
+
+      <Link
+        href="/exercises"
+        className="flex items-center justify-between p-4 bg-card border border-card-border rounded-2xl hover:border-accent/30 transition-colors"
+      >
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-xl bg-red-500/10">
+            <Flame size={18} className="text-red-500" />
+          </div>
+          <div>
+            <p className="text-sm font-medium">Calorie Burn Calculator</p>
+            <p className="text-xs text-muted">Estimate kcal per exercise</p>
+          </div>
+        </div>
+        <ArrowRight size={16} className="text-muted" />
+      </Link>
     </div>
   );
 }

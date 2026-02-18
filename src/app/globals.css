@@ -40,3 +40,12 @@ body {
 .pb-nav {
   padding-bottom: 5rem;
 }
+
+/* Muscle pulse animation for primary muscles */
+@keyframes muscle-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.muscle-pulse {
+  animation: muscle-pulse 2s ease-in-out infinite;
+}

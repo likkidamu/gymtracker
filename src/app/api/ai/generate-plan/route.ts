@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getGeminiClient, GEMINI_MODEL } from '@/lib/ai/gemini';
 import { getTrainingPlanPrompt } from '@/lib/ai/prompts';
 import { parseTrainingPlan } from '@/lib/ai/parsers';
+import { exerciseDatabase } from '@/data/exerciseDatabase';
 
 export async function POST(request: Request) {
   try {
@@ -11,8 +12,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Goal, level, and days are required' }, { status: 400 });
     }
 
+    const exerciseNames = exerciseDatabase.map((e) => e.name);
     const client = getGeminiClient();
-    const prompt = getTrainingPlanPrompt(goal, level, days, equipment || [], notes);
+    const prompt = getTrainingPlanPrompt(goal, level, days, equipment || [], notes, exerciseNames);
 
     const response = await client.models.generateContent({
       model: GEMINI_MODEL,

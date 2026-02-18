@@ -9,9 +9,11 @@ import { format, subDays } from 'date-fns';
 interface StatsCardsProps {
   foodEntries: FoodEntry[];
   activePlan: TrainingPlan | null;
+  weeklyWorkoutCount?: number;
+  todayCaloriesBurned?: number;
 }
 
-export function StatsCards({ foodEntries, activePlan }: StatsCardsProps) {
+export function StatsCards({ foodEntries, activePlan, weeklyWorkoutCount, todayCaloriesBurned }: StatsCardsProps) {
   // Calculate streak: consecutive days with at least 1 food entry, counting back from today
   const today = new Date();
   let streak = 0;
@@ -28,26 +30,14 @@ export function StatsCards({ foodEntries, activePlan }: StatsCardsProps) {
   // Total meals tracked
   const totalMeals = foodEntries.length;
 
-  // Total workouts in active plan
-  const totalWorkouts = activePlan
-    ? activePlan.workoutDays.filter((d) => !d.restDay).length
-    : 0;
-
-  // Average daily calories (over days that have entries)
-  const dateCalories: Record<string, number> = {};
-  for (const entry of foodEntries) {
-    const cal = entry.manualOverride?.calories ?? entry.aiAnalysis?.totalCalories ?? 0;
-    dateCalories[entry.date] = (dateCalories[entry.date] || 0) + cal;
-  }
-  const daysWithEntries = Object.keys(dateCalories).length;
-  const totalCals = Object.values(dateCalories).reduce((sum, c) => sum + c, 0);
-  const avgCalories = daysWithEntries > 0 ? Math.round(totalCals / daysWithEntries) : 0;
+  const workoutsThisWeek = weeklyWorkoutCount ?? 0;
+  const burnedToday = todayCaloriesBurned != null ? Math.round(todayCaloriesBurned) : 0;
 
   const stats = [
     { icon: CalendarCheck, label: 'Day Streak', value: streak, color: 'text-accent' },
     { icon: Utensils, label: 'Meals Logged', value: totalMeals, color: 'text-amber-500' },
-    { icon: Dumbbell, label: 'Workouts/Week', value: totalWorkouts, color: 'text-blue-500' },
-    { icon: Flame, label: 'Avg Calories', value: `${avgCalories}`, color: 'text-red-500' },
+    { icon: Dumbbell, label: 'Workouts/Wk', value: workoutsThisWeek, color: 'text-blue-500' },
+    { icon: Flame, label: 'Burned Today', value: `${burnedToday}`, color: 'text-red-500' },
   ];
 
   return (
